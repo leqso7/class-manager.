@@ -147,20 +147,6 @@
 
         // პერიოდული შემოწმება უფრო დიდი ინტერვალით
         setInterval(checkAccessStatus, 30000);
-
-        // დავამატოთ ფუნქცია ოფლაინ რეჟიმის შესამოწმებლად
-        function checkOfflineAccess() {
-            const offlineAccess = localStorage.getItem('offlineAccess');
-            const uniqueCode = localStorage.getItem('uniqueCode');
-            
-            if (offlineAccess === 'true' && uniqueCode) {
-                // თუ უკვე აქვს წვდომა, გადავამისამართოთ index.html-ზე
-                window.location.href = 'index.html';
-            }
-        }
-
-        // შევამოწმოთ ჩატვირთვისას
-        document.addEventListener('DOMContentLoaded', checkOfflineAccess);
     </script>
 
     <script>
