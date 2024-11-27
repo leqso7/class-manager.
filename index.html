@@ -293,7 +293,7 @@ background-color: #d32f2f;
 
 /* Style for enlarged groups */
 .enlarged .group {
-font-size: 35px; /* შევცვალეთ 53-დან 35-მდე */
+font-size: 35px; /* შ���ვცვალეთ 53-დან 35-მდე */
 margin-bottom: 30px;
 text-transform: uppercase;
 }
@@ -593,7 +593,7 @@ button {
 
 .names-container {
   flex: 1;
-  overflow-y: auto; /* ვერტიკალური სქროლი */
+  overflow-y: auto; /* ვერტიკალ����ი სქ���ო���ი */
   max-height: 40vh; /* სახელების კონტეინერის მაქსიმალური სიმაღლე */
   margin: 10px 0;
   padding-right: 5px; /* ადგილი სქროლბარისთვის */
@@ -868,7 +868,8 @@ button {
       font-size: 2.5em;
       padding: 15px;
   }
-}</style>
+}
+  </style>
 <script type="module">
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -1006,37 +1007,53 @@ button {
 
     // დავიჭიროთ beforeinstallprompt მოვლენა
     window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
+      
+      // Store the event so it can be triggered later.
       deferredPrompt = e;
 
-      // ნოთიფიკაციის ჩვენება
-      const addShortcutButton = document.createElement('button');
-      addShortcutButton.textContent = 'გსურთ საიტის shortcut დამატება?';
-      addShortcutButton.style.position = 'fixed';
-      addShortcutButton.style.bottom = '20px';
-      addShortcutButton.style.right = '20px';
-      addShortcutButton.style.padding = '10px 20px';
-      addShortcutButton.style.background = '#4CAF50';
-      addShortcutButton.style.color = '#fff';
-      addShortcutButton.style.border = 'none';
-      addShortcutButton.style.borderRadius = '5px';
-      addShortcutButton.style.cursor = 'pointer';
-      document.body.appendChild(addShortcutButton);
+      // შევქმნათ და გამოვაჩინოთ ინსტალაციის ღილაკი
+      const installButton = document.createElement('button');
+      installButton.id = 'installButton';
+      installButton.innerHTML = '📱 დააინსტალირე აპლიკაცია';
+      installButton.style.cssText = `
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          padding: 10px 20px;
+          background: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          z-index: 9999;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      `;
 
-      // ღილაკზე დაჭერის შემთხვევაში
-      addShortcutButton.addEventListener('click', () => {
-        addShortcutButton.remove(); // ღილაკის წაშლა
-        deferredPrompt.prompt(); // მოთხოვნის გამოჩენა
-
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            alert('Shortcut დაემატა!');
-          } else {
-            alert('Shortcut არ დაემატა.');
+      installButton.addEventListener('click', async () => {
+          if (deferredPrompt) {
+              // Show the install prompt
+              deferredPrompt.prompt();
+              
+              // Wait for the user to respond to the prompt
+              const { outcome } = await deferredPrompt.userChoice;
+              
+              if (outcome === 'accepted') {
+                  console.log('User accepted the install prompt');
+              } else {
+                  console.log('User dismissed the install prompt');
+              }
+              
+              // Clear the deferredPrompt variable
+              deferredPrompt = null;
+              
+              // Remove the install button
+              installButton.remove();
           }
-          deferredPrompt = null; // წვდომის განულება
-        });
       });
+
+      document.body.appendChild(installButton);
     });
     
   </script>
