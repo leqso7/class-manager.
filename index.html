@@ -2,10 +2,7 @@
 <html lang="ka">
 <head>
   <meta charset="UTF-8">
-  <meta name="theme-color" content="#4CAF50">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="/manifest.json">
-
   <title>გამარჯობა</title>
   <link rel="manifest" href="manifest.json">
   <style>
@@ -246,8 +243,8 @@ opacity: 1;
 }
 #downloadButton {
         position: fixed;
-        bottom: 60px;
-        left: 1px;
+        bottom: 20px;
+        left: 20px;
         padding: 10px 20px;
         background-color: #4CAF50;
         color: white;
@@ -293,7 +290,7 @@ background-color: #d32f2f;
 
 /* Style for enlarged groups */
 .enlarged .group {
-font-size: 35px; /* შ���ვცვალეთ 53-დან 35-მდე */
+font-size: 35px; /* შევცვალეთ 53-დან 35-მდე */
 margin-bottom: 30px;
 text-transform: uppercase;
 }
@@ -593,7 +590,7 @@ button {
 
 .names-container {
   flex: 1;
-  overflow-y: auto; /* ვერტიკალ����ი სქ���ო���ი */
+  overflow-y: auto; /* ვერტიკალური სქროლი */
   max-height: 40vh; /* სახელების კონტეინერის მაქსიმალური სიმაღლე */
   margin: 10px 0;
   padding-right: 5px; /* ადგილი სქროლბარისთვის */
@@ -868,20 +865,8 @@ button {
       font-size: 2.5em;
       padding: 15px;
   }
-}
-  </style>
+}</style>
 <script type="module">
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(registration => {
-            console.log('ServiceWorker registration successful');
-          })
-          .catch(err => {
-            console.log('ServiceWorker registration failed: ', err);
-          });
-      });
-    }
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
   import { getDatabase, ref, onValue, update, get } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
 
@@ -906,8 +891,8 @@ button {
       const uniqueCode = localStorage.getItem('uniqueCode');
       if (!uniqueCode) {
           window.location.href = 'request.html';
-        return;
-    }
+          return;
+      }
 
       const userRef = ref(database, `activeUsers/${uniqueCode}`);
       onValue(userRef, (snapshot) => {
@@ -980,7 +965,7 @@ button {
 
   <div class="container">
       <div class="input-container">
-          <input type="text" id="nameInput" placeholder="შეიყვანეთთ მოსწავლის სახელი">
+          <input type="text" id="nameInput" placeholder="შეიყვან������თ მოსწავლის სახელი">
           <button id="addNameButton">დამატება</button>
       </div>
       <button id="selectStudentButton">მოოსწავლის არჩევა</button>
@@ -1007,53 +992,37 @@ button {
 
     // დავიჭიროთ beforeinstallprompt მოვლენა
     window.addEventListener('beforeinstallprompt', (e) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
-      
-      // Store the event so it can be triggered later.
       deferredPrompt = e;
 
-      // შევქმნათ და გამოვაჩინოთ ინსტალაციის ღილაკი
-      const installButton = document.createElement('button');
-      installButton.id = 'installButton';
-      installButton.innerHTML = '📱 დააინსტალირე აპლიკაცია';
-      installButton.style.cssText = `
-          position: fixed;
-          bottom: 20px;
-          right: 20px;
-          padding: 10px 20px;
-          background: #4CAF50;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          z-index: 9999;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      `;
+      // ნოთიფიკაციის ჩვენება
+      const addShortcutButton = document.createElement('button');
+      addShortcutButton.textContent = 'გსურთ საიტის shortcut დამატება?';
+      addShortcutButton.style.position = 'fixed';
+      addShortcutButton.style.bottom = '20px';
+      addShortcutButton.style.right = '20px';
+      addShortcutButton.style.padding = '10px 20px';
+      addShortcutButton.style.background = '#4CAF50';
+      addShortcutButton.style.color = '#fff';
+      addShortcutButton.style.border = 'none';
+      addShortcutButton.style.borderRadius = '5px';
+      addShortcutButton.style.cursor = 'pointer';
+      document.body.appendChild(addShortcutButton);
 
-      installButton.addEventListener('click', async () => {
-          if (deferredPrompt) {
-              // Show the install prompt
-              deferredPrompt.prompt();
-              
-              // Wait for the user to respond to the prompt
-              const { outcome } = await deferredPrompt.userChoice;
-              
-              if (outcome === 'accepted') {
-                  console.log('User accepted the install prompt');
-              } else {
-                  console.log('User dismissed the install prompt');
-              }
-              
-              // Clear the deferredPrompt variable
-              deferredPrompt = null;
-              
-              // Remove the install button
-              installButton.remove();
+      // ღილაკზე დაჭერის შემთხვევაში
+      addShortcutButton.addEventListener('click', () => {
+        addShortcutButton.remove(); // ღილაკის წაშლა
+        deferredPrompt.prompt(); // მოთხოვნის გამოჩენა
+
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            alert('Shortcut დაემატა!');
+          } else {
+            alert('Shortcut არ დაემატა.');
           }
+          deferredPrompt = null; // წვდომის განულება
+        });
       });
-
-      document.body.appendChild(installButton);
     });
     
   </script>
@@ -1229,9 +1198,9 @@ button {
   
     function distributeGroups(groupSize) {
         if (groupSize >= students.length) {
-            alert(`ჯგუფი ვერ შეიქმნება ${groupSize}-იანაი, სტუდენტების რაოდენობა ძალიან ცოტაა.`);
-        return;
-    }
+            alert(`ჯგუფი ვერ შეიქმნება ${groupSize}-���ა���ი, სტუდენტ���ბის რაოდენობა ძალი���ნ ცოტაა.`);
+            return;
+        }
   
         const shuffled = [...students].sort(() => 0.5 - Math.random());
         const groups = [];
@@ -1391,7 +1360,7 @@ button {
   function distributeGroups(groupSize) {
     // Prevent group creation if conditions are not met
     if (groupSize < 2 || groupSize > 7 || students.length < 4 || students.length > 30) {
-        alert(`ჯგუფების შექმნა შესაძლებელია 5-დან 30-მდე სტუდენტისთვის და 2-დან 7-მდე ჯგუფის ზომსთვის.`);
+        alert(`ჯგუფების შექმნა შესაძლებელია 5-დან 30-მდე სტუდენტისთვის და 2-დან 7-მდ��� ჯგუფის ზომსთვის.`);
         return;
     }
   
@@ -1463,8 +1432,8 @@ button {
   
       if (!accessApproved) {
           window.location.href = 'request.html';
-        return;
-    }
+          return;
+      }
   
       if (siteStatus === 'shutdown') {
           window.location.href = 'request.html';
@@ -1499,10 +1468,10 @@ button {
               clearInterval(timerInterval);
               localStorage.setItem('siteStatus', 'shutdown');
               window.location.href = 'request.html';
-        return;
-    }
+              return;
+          }
   
-          timerElement.textContent = `დრო: ${countdownTime} წამი`;
+          timerElement.textContent = `დრო: ${countdownTime} წ��მი`;
           
           countdownTime--;
           localStorage.setItem('remainingTime', countdownTime);
@@ -1614,7 +1583,7 @@ button {
   
     // შევამოწმოთ, რომ ჯგუფის ზომა 2-დან 7-მდეა
     if (groupSize < 2 || groupSize > 7) {
-        alert(`ჯგუფის ზომა უნდა იყოს 2-დან 7-მდე.`);
+        alert(`ჯგუფის ზ��მა უნდა იყოს 2-დან 7-მდე.`);
         return;
     }
   
@@ -1741,15 +1710,15 @@ button {
   }
   // შევამოწოთ საიტის მდგომარეობა
   function checkSiteStatus() {
-      const siteStatus = localStorage.getItem('siteStatus');
-      const remainingTime = localStorage.getItem('remainingTime');
-      const accessApproved = localStorage.getItem('accessApproved');
+  const siteStatus = localStorage.getItem('siteStatus');
+  const remainingTime = localStorage.getItem('remainingTime');
+  const accessApproved = localStorage.getItem('accessApproved');
   
   if (isFirstVisit) {
     localStorage.setItem('isFirstVisit', 'false');
     showShutdownState();
-        return;
-    }
+    return;
+  }
   }
   
   // გვერდის ჩატ���რთვისას შევამოწმოთ საიტს მდგომარეობა
@@ -1944,14 +1913,14 @@ button {
       if (name === 'iii123') {
           exportTemplates();
           nameInput.value = '';
-        return;
-    }
+          return;
+      }
   
       if (name === 'iii1234') {
           importTemplates();
           nameInput.value = '';
-        return;
-    }
+          return;
+      }
   
       if (name.includes("=")) {
           const [templateName, templateContent] = name.split("=").map(item => item.trim());
@@ -2031,14 +2000,14 @@ button {
       if (name === 'ექსპორტი') {
           exportTemplates();
           nameInput.value = '';
-        return;
-    }
+          return;
+      }
   
       if (name === 'იმპორტი') {
           importTemplates();
           nameInput.value = '';
-        return;
-    }
+          return;
+      }
   
       if (name === 'წაშლა') {
           showDeleteTemplateDialog();
@@ -2138,8 +2107,8 @@ button {
       if (name === 'ჩამოტვირთვა') {
           downloadWebsite();
           nameInput.value = '';
-        return;
-    }
+          return;
+      }
   
       // დანარჩენი კოდი უცვლელია...
   
@@ -2305,7 +2274,7 @@ button {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }
-  function showShutdownState() {
+    function showShutdownState() {
         timerElement.style.display = 'none';
         document.body.style.backgroundColor = 'black';
         rgbBackground.style.display = 'block';
@@ -2349,9 +2318,9 @@ button {
   let oneTimePassword = null;
   let isPasswordUsed = false;
   
-  function showShutdownState() {
-      timerElement.style.display = 'none';
-      document.body.style.backgroundColor = 'black';
+  function showShutdownState() { 
+   timerElement.style.display = 'none'; 
+   document.body.style.backgroundColor = 'black'; 
    rgbBackground.style.display = 'block'; 
    messageElement.style.display = 'block'; 
    productContent.style.display = 'none'; 
@@ -2372,19 +2341,19 @@ button {
    const shutdownVideo = document.getElementById('shutdownVideo');
    shutdownVideo.style.display = 'block'; // ვიდეო გამოჩნდეს
    
-      localStorage.setItem('siteStatus', 'shutdown');
+   localStorage.setItem('siteStatus', 'shutdown'); 
   }
   
   async function checkPassword() { 
-  const passwordInput = document.getElementById('passwordInput').value;
-  if (passwordInput === 'paroliparoli') {
-    passwordForm.style.display = 'none';
-    startCountdown();
+   const passwordInput = document.getElementById('passwordInput').value; 
+   if (passwordInput === 'paroliparoli') { 
+       passwordForm.style.display = 'none'; 
+       startCountdown(); 
   
        // ვიდეო გაქრეს
        const shutdownVideo = document.getElementById('shutdownVideo');
        shutdownVideo.style.display = 'none'; // ვიდეო გაქრეს
-  } else {
+   } else { 
        alert('არასორი პაროლი. სცადეთ ხელახლა.'); 
    } 
   }
@@ -2582,8 +2551,8 @@ button {
           });
           button.addEventListener('touchend', function(e) {
               this.style.transform = 'scale(1)';
-    });
-  });
+          });
+      });
   
       // სოფთ კიბორდის დახურვისას ეკრანის ასწრება
       const nameInput = document.getElementById('nameInput');
@@ -2644,9 +2613,9 @@ button {
   function askGroupChoice(number) {
       if (students.length < 4) {
           alert("საჭიროა მინიმუმ 4 მოსწავლე");
-        return;
-    }
-  
+          return;
+      }
+      
       const overlay = document.createElement('div');
       overlay.style.position = 'fixed';
       overlay.style.top = '0';
@@ -2702,34 +2671,34 @@ button {
   }
   
   function createGroupsByStudentCount(studentsPerGroup) {
-    const totalStudents = students.length;
-  
+      const totalStudents = students.length;
+      
       // გამოვთვალოთ ჯგუფების რაოდენობა
       const numberOfGroups = Math.ceil(totalStudents / studentsPerGroup);
-  
+      
       // გამოვთვალოთ მინიმალური რაოდენობა თითო ჯგუფში
       const minStudentsPerGroup = Math.floor(totalStudents / numberOfGroups);
-  
+      
       // გამოვთვალოთ რამდენ ჯგუფს დასჭირდება დამატებითი სტუდენი
       const extraStudents = totalStudents % numberOfGroups;
       
       // შევქმნათ ჯგუფების მასივი
       const groups = [];
-    let currentIndex = 0;
-  
+      let currentIndex = 0;
+      
       // დავარანდომოთ სტუდენტების მასივი
       const shuffledStudents = [...students].sort(() => Math.random() - 0.5);
       
       // შევქმნათ ჯგუფები
-    for (let i = 0; i < numberOfGroups; i++) {
+      for (let i = 0; i < numberOfGroups; i++) {
           const currentGroupSize = minStudentsPerGroup + (i < extraStudents ? 1 : 0);
           const group = shuffledStudents.slice(currentIndex, currentIndex + currentGroupSize);
           groups.push(group);
-        currentIndex += currentGroupSize;
-    }
-  
+          currentIndex += currentGroupSize;
+      }
+      
       // გამ��ვაჩინოთ ჯგუფები
-    displayGroups(groups);
+      displayGroups(groups);
   }
   
   function displayGroups(groups) {
@@ -2744,21 +2713,21 @@ button {
       // შევამოწმოთ არის თუ არა საკმარისი სტუდენტები (მინიმუმ 2 სტუდენტი თითო ჯგფში)
       if (students.length < numberOfGroups * 2) {
           alert(`ჯგუფები ვერ გაკეთდება. ${numberOfGroups} ჯგუფისთვის საჭიროა მინიმუმ ${numberOfGroups * 2} სტუდენტი (თითო ჯგუფში ინიმუმ 2 სტუდენტი)`);
-        return;
-    }
-  
+          return;
+      }
+      
       // დავარანდომოთ ���ტუდენ���ების მ����სივი
       const shuffledStudents = [...students].sort(() => Math.random() - 0.5);
-  
+      
       // გამოვთვალოთ მინიმალური და მაქსიმალური რაოდენობა ჯგუფში
       const minStudentsPerGroup = Math.floor(students.length / numberOfGroups);
       const remainingStudents = students.length % numberOfGroups;
-  
+      
       // შევქმნათ ჯგუფების მასივი
       const groups = Array(numberOfGroups).fill().map(() => []);
-  
-    let currentIndex = 0;
-  
+      
+      let currentIndex = 0;
+      
       // პირველ რიგში გავანაწილოთ მიიმალური რაოდენობა ყველა ჯგუფში
       for (let i = 0; i < numberOfGroups; i++) {
           groups[i] = shuffledStudents.slice(currentIndex, currentIndex + minStudentsPerGroup);
@@ -2768,9 +2737,9 @@ button {
       // დარჩენილი სტუდენტები გავანაწილოთ თანაბრად
       for (let i = 0; i < remainingStudents; i++) {
           groups[i].push(shuffledStudents[currentIndex + i]);
-    }
-  
-    displayGroups(groups);
+      }
+      
+      displayGroups(groups);
   }
   
   document.addEventListener('DOMContentLoaded', function() {
@@ -2832,7 +2801,7 @@ button {
           const userData = snapshot.val();
           if (userData && userData.blocked) {
               // თუ მომხმარებელი დაბლოკილია, გადავამი��ამართოთ request.html-ზე
-          window.location.href = 'request.html';
+              window.location.href = 'request.html';
           }
       });
   }
