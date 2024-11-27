@@ -2,7 +2,7 @@
     "name": "ელექტრონული მწვრთნელი",
     "short_name": "მწვრთნელი",
     "description": "სტუდენტების დაჯგუფების აპლიკაცია",
-    "start_url": "/index.html",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#4CAF50",
@@ -21,5 +21,13 @@
       }
     ],
     "prefer_related_applications": false,
-    "offline_enabled": true
+    "orientation": "portrait",
+    "categories": ["education", "utilities"],
+    "shortcuts": [
+      {
+        "name": "დაჯგუფება",
+        "url": "/",
+        "icons": [{ "src": "icon-192x192.png", "sizes": "192x192" }]
+      }
+    ]
   }
